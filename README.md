@@ -1,11 +1,9 @@
-opx-sai-api
------------
-This repo contains all API declarations for Switch Abstraction Interface API for the Open Swicth Base Module.
+# opx-sai-api
+This repository contains all public API declarations for switch abstraction interface (SAI) API for the OpenSwitch OPX module.
 
+The NAS component utilizes this SAI API for network processor unit (NPU)-related operations (port, L2, and L3 related). 
 
-Description
------------
+## Build
+See [opx-nas-manifest](https://github.com/open-switch/opx-nas-manifest) for more information on common build tools.
 
-This repo has all public API declarations for the SAI API.The NAS component utilizes this SAI API for NPU(network processor) related operations such as ( port,l2,l3 related). 
-
-(c) Dell 2016
+(c) 2017 Dell
