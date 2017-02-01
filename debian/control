@@ -1,4 +1,4 @@
-Source: opx-sai-api-dev
+Source: opx-sai-api
 Section: net
 Priority: optional
 Maintainer: Dell EMC <ops-dev@lists.openswitch.net>
