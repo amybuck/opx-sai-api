@@ -161,7 +161,7 @@
  *    - When a READ_ONLY attribute is passed set_attribute or create call
  *    - When a CREATE_ONLY attribute is passed to set_attribute call
  *
- *  The offset from SAI_STATUS_INVLAID_ATTRIBUTE_0 is the array index of
+ *  The offset from SAI_STATUS_INVALID_ATTRIBUTE_0 is the array index of
  *  the attribute list passed to the SAI API call.
  */
 #define SAI_STATUS_INVALID_ATTRIBUTE_0      SAI_STATUS_CODE(0x00010000L)
