@@ -88,7 +88,7 @@ typedef enum _sai_virtual_router_attr_t
      * @flags CREATE_AND_SET
      * @default SAI_PACKET_ACTION_TRAP
      */
-    SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_TTL1_ACTION,
+    SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_TTL1_PACKET_ACTION,
 
     /**
      * @brief Action for Packets with IP options
@@ -97,7 +97,16 @@ typedef enum _sai_virtual_router_attr_t
      * @flags CREATE_AND_SET
      * @default SAI_PACKET_ACTION_TRAP
      */
-    SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_IP_OPTIONS,
+    SAI_VIRTUAL_ROUTER_ATTR_VIOLATION_IP_OPTIONS_PACKET_ACTION,
+
+    /**
+     * @brief Action for Unknown L3 multicast Packets
+     *
+     * @type sai_packet_action_t
+     * @flags CREATE_AND_SET
+     * @default SAI_PACKET_ACTION_DROP
+     */
+    SAI_VIRTUAL_ROUTER_ATTR_UNKNOWN_L3_MULTICAST_PACKET_ACTION,
 
     /**
      * @brief End of attributes
@@ -116,6 +125,7 @@ typedef enum _sai_virtual_router_attr_t
  * @brief Create virtual router
  *
  * @param[out] vr_id Virtual router id
+ * @param[in] switch_id Switch id
  * @param[in] attr_count Number of attributes
  * @param[in] attr_list Array of attributes
  *
@@ -125,6 +135,7 @@ typedef enum _sai_virtual_router_attr_t
  */
 typedef sai_status_t (*sai_create_virtual_router_fn)(
         _Out_ sai_object_id_t *vr_id,
+        _In_ sai_object_id_t switch_id,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list);
 

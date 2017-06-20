@@ -27,13 +27,14 @@
 
 #include <saitypes.h>
 
-/** \defgroup SAIPORT SAI - Port specific API definitions.
+/**
+ * @defgroup SAIPORT SAI - Port specific API definitions
  *
- *  \{
+ * @{
  */
 
 /**
- *  @brief Attribute data for SAI_PORT_ATTR_TYPE
+ * @brief Attribute data for #SAI_PORT_ATTR_TYPE
  */
 typedef enum _sai_port_type_t
 {
@@ -46,7 +47,7 @@ typedef enum _sai_port_type_t
 } sai_port_type_t;
 
 /**
- *  @brief Attribute data for SAI_PORT_ATTR_OPER_STATUS
+ * @brief Attribute data for #SAI_PORT_ATTR_OPER_STATUS
  */
 typedef enum _sai_port_oper_status_t
 {
@@ -70,8 +71,8 @@ typedef enum _sai_port_oper_status_t
 /**
  * @brief Defines the operational status of the port
  */
-typedef struct _sai_port_oper_status_notification_t {
-
+typedef struct _sai_port_oper_status_notification_t
+{
     /** Port id */
     sai_object_id_t port_id;
 
@@ -81,7 +82,7 @@ typedef struct _sai_port_oper_status_notification_t {
 } sai_port_oper_status_notification_t;
 
 /**
- * @brief Attribute data for SAI_PORT_ATTR_GLOBAL_FLOW_CONTROL
+ * @brief Attribute data for #SAI_PORT_ATTR_GLOBAL_FLOW_CONTROL_MODE
  */
 typedef enum _sai_port_flow_control_mode_t
 {
@@ -100,7 +101,7 @@ typedef enum _sai_port_flow_control_mode_t
 } sai_port_flow_control_mode_t;
 
 /**
- * @brief Attribute data for SAI_PORT_ATTR_INTERNAL_LOOPBACK
+ * @brief Attribute data for #SAI_PORT_ATTR_INTERNAL_LOOPBACK_MODE
  */
 typedef enum _sai_port_internal_loopback_mode_t
 {
@@ -116,7 +117,7 @@ typedef enum _sai_port_internal_loopback_mode_t
 } sai_port_internal_loopback_mode_t;
 
 /**
- * @brief Attribute data for SAI_PORT_ATTR_FDB_LEARNING
+ * @brief Attribute data for #SAI_PORT_ATTR_FDB_LEARNING_MODE
  */
 typedef enum _sai_port_fdb_learning_mode_t
 {
@@ -135,36 +136,17 @@ typedef enum _sai_port_fdb_learning_mode_t
     /** Trap packets with unknown source MAC to CPU. Do not learn. Forward based on destination MAC */
     SAI_PORT_FDB_LEARNING_MODE_CPU_LOG,
 
+    /** Notify unknown source MAC using FDB callback. Do not learn in hardware. Do not forward.
+      * When a packet from unknown source MAC comes this mode will trigger a new learn notification
+      * via FDB callback for the MAC address. This mode will generate only one notification
+      * per unknown source MAC to FDB callback.
+      */
+    SAI_PORT_FDB_LEARNING_MODE_FDB_NOTIFICATION,
+
 } sai_port_fdb_learning_mode_t;
 
 /**
- * @brief Port Add/Delete Event
- */
-typedef enum _sai_port_event_t
-{
-    /** Create a new active port */
-    SAI_PORT_EVENT_ADD,
-
-    /** Delete/Invalidate an existing port */
-    SAI_PORT_EVENT_DELETE,
-
-} sai_port_event_t;
-
-/**
- * @brief Defines the port event notification
- */
-typedef struct _sai_port_event_notification_t {
-
-    /** Port id */
-    sai_object_id_t port_id;
-
-    /** Port event */
-    sai_port_event_t port_event;
-
-} sai_port_event_notification_t;
-
-/**
- * @brief Attribute data for SAI_PORT_ATTR_MEDIA_TYPE
+ * @brief Attribute data for #SAI_PORT_ATTR_MEDIA_TYPE
  */
 typedef enum _sai_port_media_type_t
 {
@@ -174,210 +156,669 @@ typedef enum _sai_port_media_type_t
     /** Media type not known */
     SAI_PORT_MEDIA_TYPE_UNKNONWN,
 
-    /** Media type QSFP fiber optic */
-    SAI_PORT_MEDIA_TYPE_QSFP_FIBER,
+    /** Media type fiber. Remote advertise medium information as fiber */
+    SAI_PORT_MEDIA_TYPE_FIBER,
 
-    /** Media type QSFP copper optic */
-    SAI_PORT_MEDIA_TYPE_QSFP_COPPER,
-
-    /** Media type SFP fiber optic */
-    SAI_PORT_MEDIA_TYPE_SFP_FIBER,
-
-    /** Media type SFP copper optic */
-    SAI_PORT_MEDIA_TYPE_SFP_COPPER,
-
-    /** Media type QSFP28 fiber optic */
-    SAI_PORT_MEDIA_TYPE_QSFP28_FIBER,
-
-    /** Media type QSFP28 copper optic */
-    SAI_PORT_MEDIA_TYPE_QSFP28_COPPER,
-
+    /** Media type copper. Remote advertise medium information as copper */
+    SAI_PORT_MEDIA_TYPE_COPPER,
 } sai_port_media_type_t;
 
 /**
  * @brief Breakout Mode types based on number
  * of SerDes lanes used in a port
  */
-#if 0
 typedef enum _sai_port_breakout_mode_type_t
 {
     /** 1 lane breakout Mode */
-    SAI_PORT_BREAKOUT_MODE_TYPE_1_LANE = 1,
+    SAI_PORT_BREAKOUT_MODE_TYPE_1_LANE = 0,
 
     /** 2 lanes breakout Mode */
-    SAI_PORT_BREAKOUT_MODE_TYPE_2_LANE = 2,
+    SAI_PORT_BREAKOUT_MODE_TYPE_2_LANE = 1,
 
     /** 4 lanes breakout Mode */
-    SAI_PORT_BREAKOUT_MODE_TYPE_4_LANE = 4,
+    SAI_PORT_BREAKOUT_MODE_TYPE_4_LANE = 2,
 
     /** Breakout mode max count */
     SAI_PORT_BREAKOUT_MODE_TYPE_MAX
 } sai_port_breakout_mode_type_t;
-#endif
+
 /**
- *  Attribute Id in sai_set_port_attribute() and
- *  sai_get_port_attribute() calls
+ * @brief Attribute data for #SAI_PORT_ATTR_FEC_MODE
+ */
+typedef enum _sai_port_fec_mode_t
+{
+    /** No FEC */
+    SAI_PORT_FEC_MODE_NONE,
+
+    /** Enable RS-FEC - 25G, 50G, 100G ports */
+    SAI_PORT_FEC_MODE_RS,
+
+    /** Enable FC-FEC - 10G, 25G, 40G, 50G ports */
+    SAI_PORT_FEC_MODE_FC,
+} sai_port_fec_mode_t;
+
+/**
+ * @brief Attribute Id in sai_set_port_attribute() and
+ * sai_get_port_attribute() calls
  */
 typedef enum _sai_port_attr_t
 {
-    /** READ-ONLY */
+    /**
+     * @brief Start of attributes
+     */
+    SAI_PORT_ATTR_START,
 
-    /** Port Type [sai_port_type_t] */
-    SAI_PORT_ATTR_TYPE,
+    /* READ-ONLY */
 
-    /** Operational Status [sai_port_oper_status_t] */
+    /**
+     * @brief Port Type
+     *
+     * @type sai_port_type_t
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_TYPE = SAI_PORT_ATTR_START,
+
+    /**
+     * @brief Operational Status
+     *
+     * @type sai_port_oper_status_t
+     * @flags READ_ONLY
+     */
     SAI_PORT_ATTR_OPER_STATUS,
 
-    /** Hardware Lane list [sai_u32_list_t] */
-    SAI_PORT_ATTR_HW_LANE_LIST,
+    /**
+     * @brief Breakout mode(s) supported
+     *
+     * @type sai_s32_list_t
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_SUPPORTED_BREAKOUT_MODE_TYPE,
 
-    /** Breakout mode(s) supported [sai_s32_list_t] */
-    SAI_PORT_ATTR_SUPPORTED_BREAKOUT_MODE,
+    /**
+     * @brief Current breakout mode
+     *
+     * @type sai_port_breakout_mode_type_t
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_CURRENT_BREAKOUT_MODE_TYPE,
 
-    /** Current breakout mode [sai_port_breakout_mode_type_t] */
-    SAI_PORT_ATTR_CURRENT_BREAKOUT_MODE,
-
-    /** Number of queues on port [uint32_t]*/
+    /**
+     * @brief Number of queues on port
+     *
+     * @type sai_uint32_t
+     * @flags READ_ONLY
+     */
     SAI_PORT_ATTR_QOS_NUMBER_OF_QUEUES,
 
-    /** List of Queues for the port[sai_object_list_t] */
+    /**
+     * @brief List of Queues for the port
+     *
+     * @type sai_object_list_t
+     * @objects SAI_OBJECT_TYPE_QUEUE
+     * @flags READ_ONLY
+     */
     SAI_PORT_ATTR_QOS_QUEUE_LIST,
 
-    /** Number of Scheduler groups on port [uint32_t]*/
+    /**
+     * @brief Number of Scheduler groups on port
+     *
+     * @type sai_uint32_t
+     * @flags READ_ONLY
+     */
     SAI_PORT_ATTR_QOS_NUMBER_OF_SCHEDULER_GROUPS,
 
-    /** List of Scheduler groups for the port[sai_object_list_t] */
+    /**
+     * @brief List of Scheduler groups for the port
+     *
+     * @type sai_object_list_t
+     * @objects SAI_OBJECT_TYPE_SCHEDULER_GROUP
+     * @flags READ_ONLY
+     */
     SAI_PORT_ATTR_QOS_SCHEDULER_GROUP_LIST,
 
-    /** Query list of supported port speed in Mbps [sai_u32_list_t] */
+    /**
+     * @brief Query list of supported port speed(full-duplex) in Mbps
+     *
+     * @type sai_u32_list_t
+     * @flags READ_ONLY
+     */
     SAI_PORT_ATTR_SUPPORTED_SPEED,
 
-    /** Number of ingress priority groups [sai_uint32_t] */
-    SAI_PORT_ATTR_NUMBER_OF_PRIORITY_GROUPS,
+    /**
+     * @brief Query list of supported port FEC mode
+     *
+     * @type sai_s32_list_t sai_port_fec_mode_t
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_SUPPORTED_FEC_MODE,
 
-    /** list of ingress priority groups [sai_object_list_t] */
-    SAI_PORT_ATTR_PRIORITY_GROUP_LIST,
+    /**
+     * @brief Query list of Supported HALF-Duplex speed in Mbps
+     *
+     * @type sai_u32_list_t
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_SUPPORTED_HALF_DUPLEX_SPEED,
 
-    /** READ-WRITE */
-    /** Speed in Mbps [uint32_t] */
+    /**
+     * @brief Query auto-negotiation support
+     *
+     * @type bool
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_SUPPORTED_AUTO_NEG_MODE,
+
+    /**
+     * @brief Query port supported flow control mode
+     *
+     * @type sai_port_flow_control_mode_t
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_SUPPORTED_FLOW_CONTROL_MODE,
+
+    /**
+     * @brief Query port supported asymmetric pause mode
+     *
+     * @type bool
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_SUPPORTED_ASYMMETRIC_PAUSE_MODE,
+
+    /**
+     * @brief Query port supported MEDIA type
+     *
+     * @type sai_port_media_type_t
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_SUPPORTED_MEDIA_TYPE,
+
+    /**
+     * @brief Query list of Advertised remote port speed (Full-Duplex) in Mbps
+     *
+     * @type sai_u32_list_t
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_REMOTE_ADVERTISED_SPEED,
+
+    /**
+     * @brief Query list of Advertised remote port FEC control
+     *
+     * @type sai_s32_list_t sai_port_fec_mode_t
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_REMOTE_ADVERTISED_FEC_MODE,
+
+    /**
+     * @brief Query list of Remote Port's Advertised HALF-Duplex speed in Mbps
+     *
+     * @type sai_u32_list_t
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_REMOTE_ADVERTISED_HALF_DUPLEX_SPEED,
+
+    /**
+     * @brief Query Remote Port's auto-negotiation Advertisement
+     *
+     * @type bool
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_REMOTE_ADVERTISED_AUTO_NEG_MODE,
+
+    /**
+     * @brief Query Remote port Advertised flow control mode
+     *
+     * @type sai_port_flow_control_mode_t
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_REMOTE_ADVERTISED_FLOW_CONTROL_MODE,
+
+    /**
+     * @brief Query Remote port Advertised asymmetric pause mode
+     *
+     * @type bool
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_REMOTE_ADVERTISED_ASYMMETRIC_PAUSE_MODE,
+
+    /**
+     * @brief Query Remote port Advertised MEDIA type
+     *
+     * @type sai_port_media_type_t
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_REMOTE_ADVERTISED_MEDIA_TYPE,
+
+    /**
+     * @brief Number of ingress priority groups
+     *
+     * @type sai_uint32_t
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_NUMBER_OF_INGRESS_PRIORITY_GROUPS,
+
+    /**
+     * @brief list of ingress priority groups
+     *
+     * @type sai_object_list_t
+     * @objects SAI_OBJECT_TYPE_INGRESS_PRIORITY_GROUP
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_INGRESS_PRIORITY_GROUP_LIST,
+
+    /* READ-WRITE */
+
+    /**
+     * @brief Hardware Lane list
+     *
+     * @type sai_u32_list_t
+     * @flags MANDATORY_ON_CREATE | CREATE_ONLY | KEY
+     */
+    SAI_PORT_ATTR_HW_LANE_LIST,
+
+    /**
+     * @brief Speed in Mbps
+     *
+     * @type sai_uint32_t
+     * @flags MANDATORY_ON_CREATE | CREATE_AND_SET
+     */
     SAI_PORT_ATTR_SPEED,
 
-    /** Full Duplex setting [bool] (default to TRUE) */
+    /**
+     * @brief Full Duplex setting
+     *
+     * @type bool
+     * @flags CREATE_ONLY
+     * @default true
+     */
     SAI_PORT_ATTR_FULL_DUPLEX_MODE,
 
-    /** Auto Negotiation configuration [bool] (default to FALSE) */
+    /**
+     * @brief Auto Negotiation configuration
+     *
+     * @type bool
+     * @flags CREATE_ONLY
+     * @default false
+     */
     SAI_PORT_ATTR_AUTO_NEG_MODE,
 
-    /** Admin Mode [bool], (default to FALSE)*/
+    /**
+     * @brief Admin Mode
+     *
+     * @type bool
+     * @flags CREATE_AND_SET
+     * @default false
+     */
     SAI_PORT_ATTR_ADMIN_STATE,
 
-    /** Media Type [sai_port_media_type_t],
-     * (default to SAI_PORT_MEDIA_TYPE_NOT_PRESENT) */
+    /**
+     * @brief Media Type
+     *
+     * @type sai_port_media_type_t
+     * @flags CREATE_ONLY
+     * @default SAI_PORT_MEDIA_TYPE_NOT_PRESENT
+     */
     SAI_PORT_ATTR_MEDIA_TYPE,
 
-    /** Port VLAN ID [sai_vlan_id_t]
+    /**
+     * @brief Query/Configure list of Advertised port speed (Full-Duplex) in Mbps
+     *
+     * @type sai_u32_list_t
+     * @flags CREATE_AND_SET
+     * @default empty
+     */
+    SAI_PORT_ATTR_ADVERTISED_SPEED,
+
+    /**
+     * @brief Query/Configure list of Advertised port FEC Mode
+     *
+     * @type sai_s32_list_t sai_port_fec_mode_t
+     * @flags CREATE_AND_SET
+     * @default empty
+     */
+    SAI_PORT_ATTR_ADVERTISED_FEC_MODE,
+
+    /**
+     * @brief Query/Configure list of Advertised HALF-Duplex speed in Mbps
+     *
+     * @type sai_u32_list_t
+     * @flags CREATE_AND_SET
+     * @default empty
+     */
+    SAI_PORT_ATTR_ADVERTISED_HALF_DUPLEX_SPEED,
+
+    /**
+     * @brief Query/Configure Port's Advertised auto-negotiation configuration
+     *
+     * @type bool
+     * @flags CREATE_AND_SET
+     * @default false
+     */
+    SAI_PORT_ATTR_ADVERTISED_AUTO_NEG_MODE,
+
+    /**
+     * @brief Query/Configure Port's Advertised flow control mode
+     *
+     * @type sai_port_flow_control_mode_t
+     * @flags CREATE_AND_SET
+     * @default SAI_PORT_FLOW_CONTROL_MODE_DISABLE
+     */
+    SAI_PORT_ATTR_ADVERTISED_FLOW_CONTROL_MODE,
+
+    /**
+     * @brief Query port's Advertised asymmetric pause mode
+     *
+     * @type bool
+     * @flags CREATE_AND_SET
+     * @default false
+     */
+    SAI_PORT_ATTR_ADVERTISED_ASYMMETRIC_PAUSE_MODE,
+
+    /**
+     * @brief Query/Configure Port's Advertised media type
+     *
+     * @type sai_port_media_type_t
+     * @flags CREATE_AND_SET
+     * @default SAI_PORT_MEDIA_TYPE_UNKNONWN
+     */
+    SAI_PORT_ATTR_ADVERTISED_MEDIA_TYPE,
+
+    /**
+     * @brief Port VLAN ID
+     *
      * Untagged ingress frames are tagged with Port VLAN ID (PVID)
-       (default set to 1) */
+     *
+     * @type sai_uint16_t
+     * @flags CREATE_AND_SET
+     * @default 1
+     * @isvlan true
+     */
     SAI_PORT_ATTR_PORT_VLAN_ID,
 
-    /** Default VLAN Priority [uint8_t]
-       (default to 0) */
+    /**
+     * @brief Default VLAN Priority
+     *
+     * @type sai_uint8_t
+     * @flags CREATE_AND_SET
+     * @default 0
+     */
     SAI_PORT_ATTR_DEFAULT_VLAN_PRIORITY,
 
-    /** Ingress Filtering (Drop Frames with Unknown VLANs) [bool]
-       (default to FALSE) */
+    /**
+     * @brief Ingress Filtering (Drop Frames with Unknown VLANs)
+     *
+     * @type bool
+     * @flags CREATE_AND_SET
+     * @default false
+     */
     SAI_PORT_ATTR_INGRESS_FILTERING,
 
-    /** Dropping of untagged frames on ingress [bool]
-       (default to FALSE) */
+    /**
+     * @brief Dropping of untagged frames on ingress
+     *
+     * @type bool
+     * @flags CREATE_AND_SET
+     * @default false
+     */
     SAI_PORT_ATTR_DROP_UNTAGGED,
 
-    /** Dropping of tagged frames on ingress [bool]
-       (default to FALSE) */
+    /**
+     * @brief Dropping of tagged frames on ingress
+     *
+     * @type bool
+     * @flags CREATE_AND_SET
+     * @default false
+     */
     SAI_PORT_ATTR_DROP_TAGGED,
 
-    /** Internal loopback control [sai_port_internal_loopback_mode_t]
-       (default to SAI_PORT_INTERNAL_LOOPBACK_NONE) */
-    SAI_PORT_ATTR_INTERNAL_LOOPBACK,
+    /**
+     * @brief Internal loopback control
+     *
+     * @type sai_port_internal_loopback_mode_t
+     * @flags CREATE_AND_SET
+     * @default SAI_PORT_INTERNAL_LOOPBACK_MODE_NONE
+     */
+    SAI_PORT_ATTR_INTERNAL_LOOPBACK_MODE,
 
-    /** FDB Learning mode [sai_port_fdb_learning_mode_t]
-       (default to SAI_PORT_LEARN_MODE_HW) */
-    SAI_PORT_ATTR_FDB_LEARNING,
+    /**
+     * @brief Forward Error Correction (FEC) control
+     *
+     * @type sai_port_fec_mode_t
+     * @flags CREATE_AND_SET
+     * @default SAI_PORT_FEC_MODE_NONE
+     */
+    SAI_PORT_ATTR_FEC_MODE,
 
-    /** Update DSCP of outgoing packets [bool]
-       (default to FALSE) */
+    /**
+     * @brief FDB Learning mode
+     *
+     * @type sai_port_fdb_learning_mode_t
+     * @flags CREATE_AND_SET
+     * @default SAI_PORT_FDB_LEARNING_MODE_HW
+     */
+    SAI_PORT_ATTR_FDB_LEARNING_MODE,
+
+    /**
+     * @brief Update DSCP of outgoing packets
+     *
+     * @type bool
+     * @flags CREATE_AND_SET
+     * @default false
+     */
     SAI_PORT_ATTR_UPDATE_DSCP,
 
-    /** MTU [uint32_t]
-       (default to 1514 bytes*/
+    /**
+     * @brief MTU
+     *
+     * @type sai_uint32_t
+     * @flags CREATE_AND_SET
+     * @default 1514
+     */
     SAI_PORT_ATTR_MTU,
 
-    /** Enable flood (unknown unicast or unknown multicast)
-       storm control policer on port [sai_object_id_t]
-       Policer id = SAI_NULL_OBJECT_ID to disable policer on port */
+    /**
+     * @brief Enable flood (unknown unicast or unknown multicast)
+     * storm control policer on port. Set policer id = #SAI_NULL_OBJECT_ID to
+     * disable policer on port.
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_POLICER
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_FLOOD_STORM_CONTROL_POLICER_ID,
 
-    /** Enable broadcast storm control policer on port [sai_object_id_t]
-       Policer id = SAI_NULL_OBJECT_ID to disable policer on port */
+    /**
+     * @brief Enable broadcast storm control policer on port. Set
+     * Policer id = #SAI_NULL_OBJECT_ID to disable policer on port
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_POLICER
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_BROADCAST_STORM_CONTROL_POLICER_ID,
 
-    /** Enable multicast storm control policer on port [sai_object_id_t]
-       Policer id = SAI_NULL_OBJECT_ID to disable policer on port */
+    /**
+     * @brief Enable multicast storm control policer on port. Set
+     * policer id = #SAI_NULL_OBJECT_ID to disable policer on port
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_POLICER
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_MULTICAST_STORM_CONTROL_POLICER_ID,
 
-    /** [sai_port_flow_control_mode_t]
-       (default to SAI_PORT_FLOW_CONTROL_DISABLE) */
-    SAI_PORT_ATTR_GLOBAL_FLOW_CONTROL,
+    /**
+     * @brief Global flow control
+     *
+     * @type sai_port_flow_control_mode_t
+     * @flags CREATE_AND_SET
+     * @default SAI_PORT_FLOW_CONTROL_MODE_DISABLE
+     */
+    SAI_PORT_ATTR_GLOBAL_FLOW_CONTROL_MODE,
 
-    /** Maximum number of learned MAC addresses [uint32_t] */
+    /**
+     * @brief Maximum number of learned MAC addresses
+     *
+     * @type sai_uint32_t
+     * @flags CREATE_AND_SET
+     * @default 0
+     */
     SAI_PORT_ATTR_MAX_LEARNED_ADDRESSES,
 
-    /** Action for packets with unknown source mac address
+    /**
+     * @brief Action for packets with unknown source mac address
      * when FDB learning limit is reached.
-     * [sai_packet_action_t] (default to SAI_PACKET_ACTION_DROP) */
-    SAI_PORT_ATTR_FDB_LEARNING_LIMIT_VIOLATION,
+     *
+     * @type sai_packet_action_t
+     * @flags CREATE_AND_SET
+     * @default SAI_PACKET_ACTION_DROP
+     */
+    SAI_PORT_ATTR_FDB_LEARNING_LIMIT_VIOLATION_PACKET_ACTION,
 
-    /** Enable/Disable Mirror session [sai_object_list_t].
-     * Enable ingress mirroring by assigning list of mirror session
-     * object id as attribute value
-     * Disable ingress mirroring by assigning object_count as 0 in objlist */
+    /**
+     * @brief Port bind point for ingress ACL object
+     *
+     * Bind (or unbind) an ingress acl table or acl group on a port. Enable/Update
+     * ingress ACL table or ACL group filtering by assigning the list of valid
+     * object id. Disable ingress filtering by assigning SAI_NULL_OBJECT_ID
+     * in the attribute value.
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_ACL_TABLE, SAI_OBJECT_TYPE_ACL_TABLE_GROUP
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
+    SAI_PORT_ATTR_INGRESS_ACL,
+
+    /**
+     * @brief Port bind point for egress ACL object
+     *
+     * Bind (or unbind) an egress acl tables or acl group on a port. Enable/Update
+     * egress ACL table or ACL group filtering by assigning the list of valid
+     * object id. Disable egress filtering by assigning SAI_NULL_OBJECT_ID
+     * in the attribute value.
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_ACL_TABLE, SAI_OBJECT_TYPE_ACL_TABLE_GROUP
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
+    SAI_PORT_ATTR_EGRESS_ACL,
+
+    /**
+     * @brief Enable/Disable Mirror session
+     *
+     * Enable ingress mirroring by assigning list of mirror session object id
+     * as attribute value, disable ingress mirroring by assigning object_count
+     * as 0 in objlist
+     *
+     * @type sai_object_list_t
+     * @objects SAI_OBJECT_TYPE_MIRROR_SESSION
+     * @flags CREATE_AND_SET
+     * @default empty
+     */
     SAI_PORT_ATTR_INGRESS_MIRROR_SESSION,
 
-    /** Enable/Disable Mirror session [sai_object_list_t].
-     * Enable egress mirroring by assigning list of mirror session
-     * object id as attribute value
-     * Disable egress mirroring by assigning object_count as 0 in objlist */
+    /**
+     * @brief Enable/Disable Mirror session
+     *
+     * Enable egress mirroring by assigning list of mirror session object id as
+     * attribute value Disable egress mirroring by assigning object_count as 0
+     * in objlist
+     *
+     * @type sai_object_list_t
+     * @objects SAI_OBJECT_TYPE_MIRROR_SESSION
+     * @flags CREATE_AND_SET
+     * @default empty
+     */
     SAI_PORT_ATTR_EGRESS_MIRROR_SESSION,
 
-    /** Enable/Disable Samplepacket session [sai_object_id_t].
+    /**
+     * @brief Enable/Disable Samplepacket session
+     *
      * Enable ingress sampling by assigning samplepacket object id
-     * Disable ingress sampling by assigning SAI_NULL_OBJECT_ID as
-     * attribute value */
+     * Disable ingress sampling by assigning #SAI_NULL_OBJECT_ID as
+     * attribute value
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_SAMPLEPACKET
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_INGRESS_SAMPLEPACKET_ENABLE,
 
-    /** Enable/Disable Samplepacket session [sai_object_id_t].
+    /**
+     * @brief Enable/Disable Samplepacket session
+     *
      * Enable egress sampling by assigning samplepacket object id
-     * Disable egress sampling by assigning SAI_NULL_OBJECT_ID as
-     * attribute value */
+     * Disable egress sampling by assigning #SAI_NULL_OBJECT_ID as
+     * attribute value
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_SAMPLEPACKET
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_EGRESS_SAMPLEPACKET_ENABLE,
 
-    /** Attach/Detach policer to port [sai_object_id_t],
-     * Policer id = SAI_NULL_OBJECT_ID to disable policer on port */
+    /**
+     * @brief Attach/Detach policer to port
+     *
+     * Set policer id = #SAI_NULL_OBJECT_ID to disable policer on port
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_POLICER
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_POLICER_ID,
 
-    /** Port default Traffic class Mapping */
+    /**
+     * @brief Port default Traffic class Mapping
+     *
+     * @type sai_uint8_t
+     * @flags CREATE_AND_SET
+     * @default 0
+     */
     SAI_PORT_ATTR_QOS_DEFAULT_TC,
 
-   /** Enable DOT1P -> TC MAP [sai_object_id_t] on port
-    * MAP id = SAI_NULL_OBJECT_ID to disable map on port.
-    * To enable/disable trust Dot1p, Map ID should be add/remove on port.
-    * Default no map */
+    /**
+     * @brief Enable DOT1P -> TC MAP on port
+     *
+     * MAP id = #SAI_NULL_OBJECT_ID to disable map on port.
+     * To enable/disable trust Dot1p, Map ID should be add/remove on port.
+     * Default no map
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_QOS_MAP
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_QOS_DOT1P_TO_TC_MAP,
 
-   /** Enable DOT1P -> COLOR MAP [sai_object_id_t] on port
-    * MAP id = SAI_NULL_OBJECT_ID to disable map on port.
-    * To enable/disable trust Dot1p, Map ID should be add/remove on port.
-    * Default no map */
+    /**
+     * @brief Enable DOT1P -> COLOR MAP on port
+     *
+     * MAP id = #SAI_NULL_OBJECT_ID to disable map on port.
+     * To enable/disable trust Dot1p, Map ID should be add/remove on port.
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_QOS_MAP
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_QOS_DOT1P_TO_COLOR_MAP,
 
     /** Enable DOT1P -> TC AND COLOR MAP [sai_object_id_t] on port
@@ -386,16 +827,33 @@ typedef enum _sai_port_attr_t
     * Default no map */
     SAI_PORT_ATTR_QOS_DOT1P_TO_TC_AND_COLOR_MAP,
 
-   /** Enable DSCP -> TC MAP [sai_object_id_t] on port
-    * MAP id = SAI_NULL_OBJECT_ID to disable map on port.
-    * To enable/disable trust DSCP, Map ID should be add/remove on port.
-    * Default no map */
+    /**
+     * @brief Enable DSCP -> TC MAP on port
+     *
+     * MAP id = #SAI_NULL_OBJECT_ID to disable map on port.
+     * To enable/disable trust DSCP, Map ID should be add/remove on port.
+     * Default no map
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_QOS_MAP
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_QOS_DSCP_TO_TC_MAP,
 
-   /** Enable DSCP -> COLOR MAP [sai_object_id_t] on port
-    * MAP id = SAI_NULL_OBJECT_ID to disable map on port.
-    * To enable/disable trust DSCP, Map ID should be add/remove on port.
-    * Default no map */
+    /**
+     * @brief Enable DSCP -> COLOR MAP on port
+     *
+     * MAP id = #SAI_NULL_OBJECT_ID to disable map on port.
+     * To enable/disable trust DSCP, Map ID should be add/remove on port.
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_QOS_MAP
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_QOS_DSCP_TO_COLOR_MAP,
 
     /** Enable DSCP -> TC AND COLOR MAP [sai_object_id_t] on port
@@ -404,74 +862,189 @@ typedef enum _sai_port_attr_t
     * Default no map */
     SAI_PORT_ATTR_QOS_DSCP_TO_TC_AND_COLOR_MAP,
 
-   /** Enable TC -> Queue MAP [sai_object_id_t]  on port
-    * Map id = SAI_NULL_OBJECT_ID to disable map on port.
-    * Default no map i.e All packets to queue 0 */
+    /**
+     * @brief Enable TC -> Queue MAP on port
+     *
+     * Map id = #SAI_NULL_OBJECT_ID to disable map on port.
+     * Default no map i.e All packets to queue 0
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_QOS_MAP
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_QOS_TC_TO_QUEUE_MAP,
 
-   /** Enable TC -> DOT1P MAP [sai_object_id_t]
-    * Map id = SAI_NULL_OBJECT_ID to disable map on port.
-    * Default no map */
-    SAI_PORT_ATTR_QOS_TC_TO_DOT1P_MAP,
-
-    /** Enable TC AND COLOR -> DOT1P MAP [sai_object_id_t]
-    * Map id = SAI_NULL_OBJECT_ID to disable map on port.
-    * Default no map */
+    /**
+     * @brief Enable TC AND COLOR -> DOT1P MAP
+     *
+     * Map id = #SAI_NULL_OBJECT_ID to disable map on port.
+     * Default no map
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_QOS_MAP
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DOT1P_MAP,
 
-   /** Enable TC -> DSCP MAP [sai_object_id_t]
-    * Map id = SAI_NULL_OBJECT_ID to disable map on port.
-    * Default no map */
-    SAI_PORT_ATTR_QOS_TC_TO_DSCP_MAP,
-
-   /** Enable TC AND COLOR -> DSCP MAP [sai_object_id_t]
-    * Map id = SAI_NULL_OBJECT_ID to disable map on port.
-    * Default no map */
+    /**
+     * @brief Enable TC AND COLOR -> DSCP MAP
+     *
+     * Map id = #SAI_NULL_OBJECT_ID to disable map on port.
+     * Default no map
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_QOS_MAP
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_QOS_TC_AND_COLOR_TO_DSCP_MAP,
 
-    /** Enable TC -> Priority Group MAP [sai_object_id_t]
-     * Map id = SAI_NULL_OBJECT_ID to disable map on port.
-     * Default no map */
+    /**
+     * @brief Enable TC -> Priority Group MAP
+     *
+     * Map id = #SAI_NULL_OBJECT_ID to disable map on port.
+     * Default no map
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_QOS_MAP
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_QOS_TC_TO_PRIORITY_GROUP_MAP,
 
-    /** Enable Priority Group -> PFC Priority MAP [sai_object_id_t]
-     * Map id = SAI_NULL_OBJECT_ID to disable map on port.
-     * Default no map */
-    SAI_PORT_ATTR_QOS_PRIORITY_GROUP_TO_PFC_PRIORITY_MAP,
+    /**
+     * @brief Enable PFC Priority -> Priority Group MAP
+     *
+     * Map id = #SAI_NULL_OBJECT_ID to disable map on port.
+     * Default no map
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_QOS_MAP
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
+    SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_PRIORITY_GROUP_MAP,
 
-    /** Enable PFC Priority -> Queue MAP [sai_object_id_t]
-     * Map id = SAI_NULL_OBJECT_ID to disable map on port.
-     * Default no map */
+    /**
+     * @brief Enable PFC Priority -> Queue MAP
+     * Map id = #SAI_NULL_OBJECT_ID to disable map on port.
+     * Default no map
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_QOS_MAP
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_QOS_PFC_PRIORITY_TO_QUEUE_MAP,
 
-    /** Attach WRED to port [sai_object_id_t]
-     (mandatory when SAI_PORT_ATTR_QOS_DROP_TYPE =  SAI_QOS_DROP_TYPE_WRED) */
+    /**
+     * @brief Attach WRED to port
+     *
+     * ID = #SAI_NULL_OBJECT_ID to disable WRED.
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_WRED
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_QOS_WRED_PROFILE_ID,
 
-    /** Scheduler for port [sai_object_id_t],
-     * Default no limits */
+    /**
+     * @brief Scheduler for port, Default no limits.
+     *
+     * #SAI_SCHEDULER_ATTR_MAX_BANDWIDTH_RATE & #SAI_SCHEDULER_ATTR_MAX_BANDWIDTH_BURST_RATE
+     * attributes alone valid. Rest will be ignored
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_SCHEDULER
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
     SAI_PORT_ATTR_QOS_SCHEDULER_PROFILE_ID,
 
-    /** Ingress buffer profiles for port [sai_object_list_t]
-     *  There can be up to SAI_SWITCH_ATTR_INGRESS_BUFFER_POOL_NUM profiles */
+    /**
+     * @brief Ingress buffer profiles for port
+     *
+     * There can be up to #SAI_SWITCH_ATTR_INGRESS_BUFFER_POOL_NUM profiles
+     *
+     * @type sai_object_list_t
+     * @objects SAI_OBJECT_TYPE_BUFFER_PROFILE
+     * @flags CREATE_AND_SET
+     * @default empty
+     */
     SAI_PORT_ATTR_QOS_INGRESS_BUFFER_PROFILE_LIST,
 
-    /** Egress buffer profiles for port [sai_object_list_t]
-     *  There can be up to SAI_SWITCH_ATTR_EGRESS_BUFFER_POOL_NUM profiles */
+    /**
+     * @brief Egress buffer profiles for port
+     *
+     * There can be up to #SAI_SWITCH_ATTR_EGRESS_BUFFER_POOL_NUM profiles
+     *
+     * @type sai_object_list_t
+     * @objects SAI_OBJECT_TYPE_BUFFER_PROFILE
+     * @flags CREATE_AND_SET
+     * @default empty
+     */
     SAI_PORT_ATTR_QOS_EGRESS_BUFFER_PROFILE_LIST,
 
-    /** bit vector enable/disable port PFC [sai_uint8_t].
-     * Valid from bit 0 to bit 7 */
+    /**
+     * @brief Bit vector enable/disable port PFC
+     *
+     * Valid from bit 0 to bit 7
+     *
+     * @type sai_uint8_t
+     * @flags CREATE_AND_SET
+     * @default 0
+     */
     SAI_PORT_ATTR_PRIORITY_FLOW_CONTROL,
 
-    /** User based Meta Data [sai_uint32_t]
-     * Value Range SAI_SWITCH_ATTR_PORT_USER_META_DATA_RANGE */
+    /**
+     * @brief User based Meta Data
+     *
+     * Value Range #SAI_SWITCH_ATTR_PORT_USER_META_DATA_RANGE
+     *
+     * @type sai_uint32_t
+     * @flags CREATE_AND_SET
+     * @default 0
+     */
     SAI_PORT_ATTR_META_DATA,
 
-    /** Egress block port list [sai_object_list_t]
+    /**
+     * @brief Egress block port list
+     *
      * Traffic ingressing on this port and egressing out of the ports in the
-     * given port list will be dropped. */
+     * given port list will be dropped.
+     *
+     * @type sai_object_list_t
+     * @objects SAI_OBJECT_TYPE_PORT
+     * @flags CREATE_AND_SET
+     * @default empty
+     */
     SAI_PORT_ATTR_EGRESS_BLOCK_PORT_LIST,
+
+    /**
+     * @brief Port Hardware Configuration Profile ID
+     *
+     * Port can require different hardware configuration based on the attached
+     * media type, cable length etc. A Profile ID maps to a Port Hardware
+     * configuration settings that needs to be applied on the Port.
+     * This attribute need not be implemented and can be ignored if the port
+     * doesn't require any specific hardware settings based on media type/cable.
+     *
+     * @type sai_uint64_t
+     * @flags CREATE_AND_SET
+     * @default vendor
+     */
+    SAI_PORT_ATTR_HW_PROFILE_ID,
 
     /**
      * @brief Port EEE Configuration
@@ -489,7 +1062,8 @@ typedef enum _sai_port_attr_t
     /**
      * @brief Port EEE IDLE time configuration
      *
-     * In low power mode, After idle time(micro secs) interval, Link refresh will be triggered.
+     * Time (in microsecs) to move to Low power state (No traffic), at the end of which MAC transitions to Low power state.
+     * MAX value set more benefit.
      *
      * @type sai_uint16_t
      * @flags CREATE_AND_SET
@@ -500,7 +1074,7 @@ typedef enum _sai_port_attr_t
     /**
      * @brief Port EEE Wakeup time configuration
      *
-     * After detect traffic time(micro secs) to be taken EEE to enter active state and resumes normal operation.
+     * Time(in microsecs) to wait before transmitter is leaving Low Power Mode State. Min value set avoid latency.
      *
      * @type sai_uint16_t
      * @flags CREATE_AND_SET
@@ -508,20 +1082,45 @@ typedef enum _sai_port_attr_t
      */
     SAI_PORT_ATTR_EEE_WAKE_TIME,
 
-    /** -- */
+    /**
+     * @brief End of attributes
+     */
+    SAI_PORT_ATTR_END,
 
-    /* Custom range base value */
-    SAI_PORT_ATTR_CUSTOM_RANGE_BASE  = 0x10000000,
+    /** Custom range base value */
+    SAI_PORT_ATTR_CUSTOM_RANGE_START = 0x10000000,
 
     /** Port level Location LED
      * Location LED helps to identify the location of the frond port in the
      * given port. */
-    SAI_PORT_ATTR_LOCATION_LED
+    SAI_PORT_ATTR_LOCATION_LED,
 
-}sai_port_attr_t;
+    /**
+     * @brief Query Remote port Advertised OUI Code
+     *
+     * @type sai_uint32_t
+     * @flags READ_ONLY
+     */
+    SAI_PORT_ATTR_REMOTE_ADVERTISED_OUI_CODE,
+
+    /**
+     * @brief Query/Configure Port's Advertised OUI code
+     *
+     * Organizationally Unique Identifier for 25G/50G auto negotiation
+     *
+     * @type sai_uint32_t
+     * @flags CREATE_AND_SET
+     * @default 0x6A737D
+     */
+    SAI_PORT_ATTR_ADVERTISED_OUI_CODE,
+
+    /** End of custom range base */
+    SAI_PORT_ATTR_CUSTOM_RANGE_END
+
+} sai_port_attr_t;
 
 /**
- *  @brief Port counter IDs in sai_get_port_stat_counters() call
+ * @brief Port counter IDs in sai_get_port_stats() call
  */
 typedef enum _sai_port_stat_t
 {
@@ -798,17 +1397,35 @@ typedef enum _sai_port_stat_t
     /** sai port stat ether out pkts 9217 to 16383 octets */
     SAI_PORT_STAT_ETHER_OUT_PKTS_9217_TO_16383_OCTETS,
 
-    /** get current port occupancy in bytes [uint64_t] */
-    SAI_PORT_STAT_CURR_OCCUPANCY_BYTES,
+    /** get in port current occupancy in bytes [uint64_t] */
+    SAI_PORT_STAT_IN_CURR_OCCUPANCY_BYTES,
 
-    /** get watermark port occupancy in bytes [uint64_t] */
-    SAI_PORT_STAT_WATERMARK_BYTES,
+    /** get in port watermark occupancy in bytes [uint64_t] */
+    SAI_PORT_STAT_IN_WATERMARK_BYTES,
 
-    /** get current port shared occupancy in bytes [uint64_t] */
-    SAI_PORT_STAT_SHARED_CURR_OCCUPANCY_BYTES,
+    /** get in port current shared occupancy in bytes [uint64_t] */
+    SAI_PORT_STAT_IN_SHARED_CURR_OCCUPANCY_BYTES,
 
-    /** get watermark port shared occupancy in bytes [uint64_t] */
-    SAI_PORT_STAT_SHARED_WATERMARK_BYTES,
+    /** get in port watermark shared occupancy in bytes [uint64_t] */
+    SAI_PORT_STAT_IN_SHARED_WATERMARK_BYTES,
+
+    /** get out port current occupancy in bytes [uint64_t] */
+    SAI_PORT_STAT_OUT_CURR_OCCUPANCY_BYTES,
+
+    /** get out port watermark occupancy in bytes [uint64_t] */
+    SAI_PORT_STAT_OUT_WATERMARK_BYTES,
+
+    /** get out port current shared occupancy in bytes [uint64_t] */
+    SAI_PORT_STAT_OUT_SHARED_CURR_OCCUPANCY_BYTES,
+
+    /** get out port watermark shared occupancy in bytes [uint64_t] */
+    SAI_PORT_STAT_OUT_SHARED_WATERMARK_BYTES,
+
+    /** get in port packet drops due to buffers [uint64_t] */
+    SAI_PORT_STAT_IN_DROPPED_PKTS,
+
+    /** get out port packet drops due to buffers [uint64_t] */
+    SAI_PORT_STAT_OUT_DROPPED_PKTS,
 
     /** get the number of pause frames received on the port [uint64_t] */
     SAI_PORT_STAT_PAUSE_RX_PKTS,
@@ -880,12 +1497,13 @@ typedef enum _sai_port_stat_t
      * This Duration is accumulative since EEE enable on port/from last clear stats*/
     SAI_PORT_STAT_EEE_RX_DURATION,
 
-}sai_port_stat_t;
+} sai_port_stat_t;
 
 /**
  * @brief Create port
  *
  * @param[out] port_id Port id
+ * @param[in] switch_id Switch id
  * @param[in] attr_count Number of attributes
  * @param[in] attr_list Array of attributes
  *
@@ -893,9 +1511,9 @@ typedef enum _sai_port_stat_t
  */
 typedef sai_status_t (*sai_create_port_fn)(
         _Out_ sai_object_id_t *port_id,
+        _In_ sai_object_id_t switch_id,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list);
-
 /**
  * @brief Remove port
  *
@@ -907,134 +1525,90 @@ typedef sai_status_t (*sai_remove_port_fn)(
         _In_ sai_object_id_t port_id);
 
 /**
- * Routine Description:
- *   @brief Set port attribute value.
+ * @brief Set port attribute value.
  *
- * Arguments:
- *    @param[in] port_id - port id
- *    @param[in] attr - attribute
+ * @param[in] port_id Port id
+ * @param[in] attr Attribute
  *
- * Return Values:
- *    @return SAI_STATUS_SUCCESS on success
- *            Failure status code on error
+ * @return #SAI_STATUS_SUCCESS on success Failure status code on error
  */
 typedef sai_status_t (*sai_set_port_attribute_fn)(
-    _In_ sai_object_id_t port_id,
-    _In_ const sai_attribute_t *attr
-    );
-
+        _In_ sai_object_id_t port_id,
+        _In_ const sai_attribute_t *attr);
 
 /**
- * Routine Description:
- *   @brief Get port attribute value.
+ * @brief Get port attribute value.
  *
- * Arguments:
- *    @param[in] port_id - port id
- *    @param[in] attr_count - number of attributes
- *    @param[inout] attr_list - array of attributes
+ * @param[in] port_id Port id
+ * @param[in] attr_count Number of attributes
+ * @param[inout] attr_list Array of attributes
  *
- * Return Values:
- *    @return SAI_STATUS_SUCCESS on success
- *            Failure status code on error
+ * @return #SAI_STATUS_SUCCESS on success Failure status code on error
  */
 typedef sai_status_t (*sai_get_port_attribute_fn)(
-    _In_ sai_object_id_t port_id,
-    _In_ uint32_t attr_count,
-    _Inout_ sai_attribute_t *attr_list
-    );
+        _In_ sai_object_id_t port_id,
+        _In_ uint32_t attr_count,
+        _Inout_ sai_attribute_t *attr_list);
 
 /**
- * Routine Description:
- *   @brief Get port statistics counters.
+ * @brief Get port statistics counters.
  *
- * Arguments:
- *    @param[in] port_id - port id
- *    @param[in] counter_ids - specifies the array of counter ids
- *    @param[in] number_of_counters - number of counters in the array
- *    @param[out] counters - array of resulting counter values.
+ * @param[in] port_id Port id
+ * @param[in] counter_ids Specifies the array of counter ids
+ * @param[in] number_of_counters Number of counters in the array
+ * @param[out] counters Array of resulting counter values.
  *
- * Return Values:
- *    @return SAI_STATUS_SUCCESS on success
- *            Failure status code on error
+ * @return #SAI_STATUS_SUCCESS on success Failure status code on error
  */
 typedef sai_status_t (*sai_get_port_stats_fn)(
-    _In_ sai_object_id_t port_id,
-    _In_ const sai_port_stat_t *counter_ids,
-    _In_ uint32_t number_of_counters,
-    _Out_ uint64_t* counters
-    );
+        _In_ sai_object_id_t port_id,
+        _In_ const sai_port_stat_t *counter_ids,
+        _In_ uint32_t number_of_counters,
+        _Out_ uint64_t *counters);
 
 /**
- * Routine Description:
- *   @brief Clear port statistics counters.
+ * @brief Clear port statistics counters.
  *
- * Arguments:
- *    @param[in] port_id - port id
- *    @param[in] counter_ids - specifies the array of counter ids
- *    @param[in] number_of_counters - number of counters in the array
+ * @param[in] port_id Port id
+ * @param[in] counter_ids Specifies the array of counter ids
+ * @param[in] number_of_counters Number of counters in the array
  *
- * Return Values:
- *    @return SAI_STATUS_SUCCESS on success
- *            Failure status code on error
+ * @return #SAI_STATUS_SUCCESS on success Failure status code on error
  */
 typedef sai_status_t (*sai_clear_port_stats_fn)(
-    _In_ sai_object_id_t port_id,
-    _In_ const sai_port_stat_t *counter_ids,
-    _In_ uint32_t number_of_counters
-    );
+        _In_ sai_object_id_t port_id,
+        _In_ const sai_port_stat_t *counter_ids,
+        _In_ uint32_t number_of_counters);
 
 /**
- * Routine Description:
- *   @brief Clear port's all statistics counters.
+ * @brief Clear port's all statistics counters.
  *
- * Arguments:
- *    @param[in] port_id - port id
+ * @param[in] port_id Port id
  *
- * Return Values:
- *    @return SAI_STATUS_SUCCESS on success
- *            Failure status code on error
+ * @return #SAI_STATUS_SUCCESS on success Failure status code on error
  */
 typedef sai_status_t (*sai_clear_port_all_stats_fn)(
-    _In_ sai_object_id_t port_id
-    );
+        _In_ sai_object_id_t port_id);
 
 /**
- * Routine Description:
- *   Port state change notification
- *   Passed as a parameter into sai_initialize_switch()
+ * @brief Port state change notification
  *
- * Arguments:
- *   @param[in] count - number of notifications
- *   @param[in] data  - array of port operational status
+ * Passed as a parameter into sai_initialize_switch()
  *
- * Return Values:
- *    None
+ * @param[in] count Number of notifications
+ * @param[in] data Array of port operational status
  */
 typedef void (*sai_port_state_change_notification_fn)(
-    _In_ uint32_t count,
-    _In_ sai_port_oper_status_notification_t *data
-    );
+        _In_ uint32_t count,
+        _In_ sai_port_oper_status_notification_t *data);
 
-/**
- * Routine Description:
- *   @brief Port event notification
- *
- * Arguments:
- *    @param[in] count - number of notifications
- *    @param[in] data  - array of port events
-
- * Return Values:
- *    None
- */
-typedef void (*sai_port_event_notification_fn)(
-    _In_ uint32_t count,
-    _In_ sai_port_event_notification_t *data
-    );
 /**
  * @brief Port methods table retrieved with sai_api_query()
  */
 typedef struct _sai_port_api_t
 {
+    sai_create_port_fn              create_port;
+    sai_remove_port_fn              remove_port;
     sai_set_port_attribute_fn       set_port_attribute;
     sai_get_port_attribute_fn       get_port_attribute;
     sai_get_port_stats_fn           get_port_stats;
@@ -1044,7 +1618,6 @@ typedef struct _sai_port_api_t
 } sai_port_api_t;
 
 /**
- * \}
+ * @}
  */
-#endif // __SAIPORT_H_
-
+#endif /** __SAIPORT_H_ */

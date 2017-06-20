@@ -113,16 +113,19 @@ typedef enum _sai_queue_attr_t
      * @objects SAI_OBJECT_TYPE_WRED
      * @flags CREATE_AND_SET
      * @allownull true
+     * @default SAI_NULL_OBJECT_ID
      */
     SAI_QUEUE_ATTR_WRED_PROFILE_ID = 0x00000004,
 
     /**
      * @brief Attach buffer profile to Queue
+     * Default no profile
      *
      * @type sai_object_id_t
      * @objects SAI_OBJECT_TYPE_BUFFER_PROFILE
      * @flags CREATE_AND_SET
      * @allownull true
+     * @default SAI_NULL_OBJECT_ID
      */
     SAI_QUEUE_ATTR_BUFFER_PROFILE_ID = 0x00000005,
 
@@ -133,6 +136,7 @@ typedef enum _sai_queue_attr_t
      * @objects SAI_OBJECT_TYPE_SCHEDULER
      * @flags CREATE_AND_SET
      * @allownull true
+     * @default SAI_NULL_OBJECT_ID
      */
     SAI_QUEUE_ATTR_SCHEDULER_PROFILE_ID = 0x00000006,
 
@@ -175,7 +179,7 @@ typedef enum _sai_queue_stat_t
     /** get/set green color dropped packets count [uint64_t] */
     SAI_QUEUE_STAT_GREEN_DROPPED_PACKETS = 0x00000006,
 
-    /** get/set green color dropped bytes count [uint64_t] */
+    /** get/set green color dropped packets count [uint64_t] */
     SAI_QUEUE_STAT_GREEN_DROPPED_BYTES = 0x00000007,
 
     /** get/set yellow color tx packets count [uint64_t] */
@@ -247,6 +251,7 @@ typedef enum _sai_queue_stat_t
  * @brief Create queue
  *
  * @param[out] queue_id Queue id
+ * @param[in] switch_id Switch id
  * @param[in] attr_count Number of attributes
  * @param[in] attr_list Array of attributes
  *
@@ -254,6 +259,7 @@ typedef enum _sai_queue_stat_t
  */
 typedef sai_status_t (*sai_create_queue_fn)(
         _Out_ sai_object_id_t *queue_id,
+        _In_ sai_object_id_t switch_id,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list);
 

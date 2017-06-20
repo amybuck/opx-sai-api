@@ -25,10 +25,10 @@
 #if !defined (__SAISCHEDULER_GROUP_H_)
 #define __SAISCHEDULER_GROUP_H_
 
-#include "saitypes.h"
+#include <saitypes.h>
 
 /**
- * @defgroup SAISCHEDULERGROUP SAI - Qos scheduler group specific API definitions.
+ * @defgroup SAISCHEDULERGROUP SAI - Qos scheduler group specific API definitions
  *
  * @{
  */
@@ -52,7 +52,7 @@ typedef enum _sai_scheduler_group_attr_t
     SAI_SCHEDULER_GROUP_ATTR_CHILD_COUNT = SAI_SCHEDULER_GROUP_ATTR_START,
 
     /**
-     * @brief Scheduler Group child object id list
+     * @brief Scheduler Group child obejct id list
      *
      * @type sai_object_list_t
      * @objects SAI_OBJECT_TYPE_SCHEDULER
@@ -86,11 +86,11 @@ typedef enum _sai_scheduler_group_attr_t
     SAI_SCHEDULER_GROUP_ATTR_MAX_CHILDS = 0x00000004,
 
     /**
-     * @brief Scheduler ID
+     * @brief Scheucler ID
      *
      * @type sai_object_id_t
      * @objects SAI_OBJECT_TYPE_SCHEDULER
-     * @flags MANDATORY_ON_CREATE | CREATE_ONLY
+     * @flags MANDATORY_ON_CREATE | CREATE_AND_SET
      */
     SAI_SCHEDULER_GROUP_ATTR_SCHEDULER_PROFILE_ID = 0x00000005,
 
@@ -118,46 +118,43 @@ typedef enum _sai_scheduler_group_attr_t
 
 } sai_scheduler_group_attr_t;
 
-
 /**
  * @brief Create Scheduler group
  *
- * @param[out] scheduler_group_id Scheduler group id
+ * @param[out] scheduler_group_id Scheudler group id
+ * @param[in] switch_id The Switch id
  * @param[in] attr_count Number of attributes
  * @param[in] attr_list Array of attributes
  *
- * @return SAI_STATUS_SUCCESS on success Failure status code on error
+ * @return #SAI_STATUS_SUCCESS on success Failure status code on error
  */
 typedef sai_status_t (*sai_create_scheduler_group_fn)(
-        _Out_ sai_object_id_t  *scheduler_group_id,
+        _Out_ sai_object_id_t *scheduler_group_id,
+        _In_ sai_object_id_t switch_id,
         _In_ uint32_t attr_count,
-        _In_ const sai_attribute_t *attr_list
-        );
+        _In_ const sai_attribute_t *attr_list);
 
 /**
  * @brief Remove Scheduler group
  *
- * @param[in] scheduler_group_id Scheduler group id
+ * @param[in] scheduler_group_id Scheudler group id
  *
- * @return SAI_STATUS_SUCCESS on success Failure status code on error
+ * @return #SAI_STATUS_SUCCESS on success Failure status code on error
  */
 typedef sai_status_t (*sai_remove_scheduler_group_fn)(
-        _In_ sai_object_id_t scheduler_group_id
-        );
-
+        _In_ sai_object_id_t scheduler_group_id);
 
 /**
  * @brief Set Scheduler group Attribute
  *
- * @param[in] scheduler_group_id Scheduler group id
+ * @param[in] scheduler_group_id Scheudler group id
  * @param[in] attr Attribute to set
  *
- * @return SAI_STATUS_SUCCESS on success Failure status code on error
+ * @return #SAI_STATUS_SUCCESS on success Failure status code on error
  */
 typedef sai_status_t (*sai_set_scheduler_group_attribute_fn)(
         _In_ sai_object_id_t scheduler_group_id,
-        _In_ const sai_attribute_t *attr
-        );
+        _In_ const sai_attribute_t *attr);
 
 /**
  * @brief Get Scheduler Group attribute
@@ -166,44 +163,12 @@ typedef sai_status_t (*sai_set_scheduler_group_attribute_fn)(
  * @param[in] attr_count Number of attributes
  * @param[inout] attr_list Array of attributes
  *
- * @return SAI_STATUS_SUCCESS on success Failure status code on error
+ * @return #SAI_STATUS_SUCCESS on success Failure status code on error
  */
 typedef sai_status_t (*sai_get_scheduler_group_attribute_fn)(
         _In_ sai_object_id_t scheduler_group_id,
         _In_ uint32_t attr_count,
-        _Inout_ sai_attribute_t *attr_list
-        );
-
-/**
- * @brief Add Child queue/group objects to scheduler group
- *
- * @param[in] scheduler_group_id Scheduler group id.
- * @param[in] child_count Number of child count
- * @param[in] child_objects Array of child objects
- *
- * @return SAI_STATUS_SUCCESS on success Failure status code on error
- */
-typedef sai_status_t (*sai_add_child_object_to_group_fn)(
-        _In_ sai_object_id_t scheduler_group_id,
-        _In_ uint32_t child_count,
-        _In_ const sai_object_id_t* child_objects
-        );
-
-
-/**
- * @brief Remove Child queue/group objects from scheduler group
- *
- * @param[in] scheduler_group_id Scheduler group id.
- * @param[in] child_count number of child count
- * @param[in] child_objects array of child objects
- *
- * @return SAI_STATUS_SUCCESS on success Failure status code on error
- */
-typedef sai_status_t (*sai_remove_child_object_from_group_fn)(
-        _In_ sai_object_id_t scheduler_group_id,
-        _In_ uint32_t child_count,
-        _In_ const sai_object_id_t* child_objects
-        );
+        _Inout_ sai_attribute_t *attr_list);
 
 /**
  * @brief Scheduler Group methods table retrieved with sai_api_query()
@@ -214,11 +179,8 @@ typedef struct _sai_scheduler_group_api_t
     sai_remove_scheduler_group_fn          remove_scheduler_group;
     sai_set_scheduler_group_attribute_fn   set_scheduler_group_attribute;
     sai_get_scheduler_group_attribute_fn   get_scheduler_group_attribute;
-    sai_add_child_object_to_group_fn       add_child_object_to_group;
-    sai_remove_child_object_from_group_fn  remove_child_object_from_group;
 
 } sai_scheduler_group_api_t;
-
 
 /**
  * @}

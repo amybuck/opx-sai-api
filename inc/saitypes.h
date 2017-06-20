@@ -25,16 +25,18 @@
 #if !defined (__SAITYPES_H_)
 #define __SAITYPES_H_
 
-/** \defgroup SAITYPES SAI - Types definitions.
+/**
+ * @defgroup SAITYPES SAI - Types definitions
  *
- *  \{
+ * @{
  */
 
 #if defined(_WIN32)
 
-//
-// *nix already has lower-case definitions for types.
-//
+/*
+ * *nix already has lower-case definitions for types.
+ */
+
 typedef UINT8  uint8_t;
 typedef UINT16 uint16_t;
 typedef UINT32 uint32_t;
@@ -59,22 +61,21 @@ typedef UINT32  sai_switch_hash_seed_t;
 #if !defined(__BOOL_DEFINED)
 
 typedef enum {
-  false,
-  true
+    false,
+    true
 } _bool;
 
 #define bool _bool
 
-#endif  // __BOOL_DEFINED
+#endif /* __BOOL_DEFINED */
 
-//
-// N.B. Equal to 260 on Windows
-//
+/**
+ * @def PATH_MAX
+ * N.B. Equal to 260 on Windows
+ */
 #define PATH_MAX MAX_PATH
 
-
-
-#else  // #if defined(_WIN32)
+#else /* #if defined(_WIN32) */
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -97,12 +98,12 @@ typedef uint32_t sai_switch_hash_seed_t;
 #define _In_reads_z_(_LEN_)
 #define _In_reads_opt_z_(_LEN_)
 
+#endif /* _WIN32 */
 
-#endif // _WIN32
+/*
+ * New common definitions
+ */
 
-//
-// New common definitions
-//
 typedef uint64_t sai_uint64_t;
 typedef int64_t sai_int64_t;
 typedef uint32_t sai_uint32_t;
@@ -113,7 +114,7 @@ typedef uint8_t sai_uint8_t;
 typedef int8_t sai_int8_t;
 typedef size_t sai_size_t;
 typedef uint64_t sai_object_id_t;
-
+typedef void *sai_pointer_t;
 /**
  * @def SAI_NULL_OBJECT_ID
  * Sai NULL object ID
@@ -123,17 +124,17 @@ typedef uint64_t sai_object_id_t;
 /**
  * Defines a list of sai object ids used as sai attribute value.
  *
- * - In set attribute function call, the count member defines the number of
+ * In set attribute function call, the count member defines the number of
  * objects.
  *
- * - In get attribute function call, the function call returns a list of objects
+ * In get attribute function call, the function call returns a list of objects
  * to the caller in the list member. The caller is responsible for allocating the
  * buffer for the list member and set the count member to the size of allocated object
  * list. If the size is large enough to accomodate the list of object id, the
  * callee will then fill the list member and set the count member to the actual
- * number of objects.  If the list size is not large enough, the callee will set the
+ * number of objects. If the list size is not large enough, the callee will set the
  * count member to the actual number of object id and return
- * SAI_STATUS_BUFFER_OVERFLOW. Once the caller gets such return code, it should
+ * #SAI_STATUS_BUFFER_OVERFLOW. Once the caller gets such return code, it should
  * use the returned count member to re-allocate list and retry.
  */
 typedef struct _sai_object_list_t {
@@ -167,40 +168,54 @@ typedef enum _sai_object_type_t {
     SAI_OBJECT_TYPE_ACL_ENTRY                =  8,
     SAI_OBJECT_TYPE_ACL_COUNTER              =  9,
     SAI_OBJECT_TYPE_ACL_RANGE                = 10,
-    SAI_OBJECT_TYPE_HOSTIF                   = 11,
-    SAI_OBJECT_TYPE_MIRROR_SESSION           = 12,
-    SAI_OBJECT_TYPE_SAMPLEPACKET             = 13,
-    SAI_OBJECT_TYPE_STP                      = 14,
-    SAI_OBJECT_TYPE_HOSTIF_TRAP_GROUP        = 15,
-    SAI_OBJECT_TYPE_ACL_TABLE_GROUP          = 16,
-    SAI_OBJECT_TYPE_POLICER                  = 17,
-    SAI_OBJECT_TYPE_WRED                     = 18,
-    SAI_OBJECT_TYPE_QOS_MAP                  = 19,
-    SAI_OBJECT_TYPE_QUEUE                    = 20,
-    SAI_OBJECT_TYPE_SCHEDULER                = 21,
-    SAI_OBJECT_TYPE_SCHEDULER_GROUP          = 22,
-    SAI_OBJECT_TYPE_BUFFER_POOL              = 23,
-    SAI_OBJECT_TYPE_BUFFER_PROFILE           = 24,
-    SAI_OBJECT_TYPE_INGRESS_PRIORITY_GROUP   = 25,
-    SAI_OBJECT_TYPE_LAG_MEMBER               = 26,
-    SAI_OBJECT_TYPE_HASH                     = 27,
-    SAI_OBJECT_TYPE_UDF                      = 28,
-    SAI_OBJECT_TYPE_UDF_MATCH                = 29,
-    SAI_OBJECT_TYPE_UDF_GROUP                = 30,
-    SAI_OBJECT_TYPE_FDB_ENTRY                = 31,
-    SAI_OBJECT_TYPE_SWITCH                   = 32,
-    SAI_OBJECT_TYPE_HOSTIF_TRAP              = 33,
-    SAI_OBJECT_TYPE_HOSTIF_USER_DEFINED_TRAP = 34,
-    SAI_OBJECT_TYPE_NEIGHBOR_ENTRY           = 35,
-    SAI_OBJECT_TYPE_ROUTE_ENTRY              = 36,
-    SAI_OBJECT_TYPE_VLAN                     = 37,
-    SAI_OBJECT_TYPE_VLAN_MEMBER              = 38,
-    SAI_OBJECT_TYPE_HOSTIF_PACKET            = 39,
-    SAI_OBJECT_TYPE_TUNNEL_MAP               = 40,
-    SAI_OBJECT_TYPE_TUNNEL                   = 41,
-    SAI_OBJECT_TYPE_TUNNEL_TERM_TABLE_ENTRY  = 42,
-    SAI_OBJECT_TYPE_FDB_FLUSH                = 43,
-    SAI_OBJECT_TYPE_MAX                      = 44
+    SAI_OBJECT_TYPE_ACL_TABLE_GROUP          = 11,
+    SAI_OBJECT_TYPE_ACL_TABLE_GROUP_MEMBER   = 12,
+    SAI_OBJECT_TYPE_HOSTIF                   = 13,
+    SAI_OBJECT_TYPE_MIRROR_SESSION           = 14,
+    SAI_OBJECT_TYPE_SAMPLEPACKET             = 15,
+    SAI_OBJECT_TYPE_STP                      = 16,
+    SAI_OBJECT_TYPE_HOSTIF_TRAP_GROUP        = 17,
+    SAI_OBJECT_TYPE_POLICER                  = 18,
+    SAI_OBJECT_TYPE_WRED                     = 19,
+    SAI_OBJECT_TYPE_QOS_MAP                  = 20,
+    SAI_OBJECT_TYPE_QUEUE                    = 21,
+    SAI_OBJECT_TYPE_SCHEDULER                = 22,
+    SAI_OBJECT_TYPE_SCHEDULER_GROUP          = 23,
+    SAI_OBJECT_TYPE_BUFFER_POOL              = 24,
+    SAI_OBJECT_TYPE_BUFFER_PROFILE           = 25,
+    SAI_OBJECT_TYPE_INGRESS_PRIORITY_GROUP   = 26,
+    SAI_OBJECT_TYPE_LAG_MEMBER               = 27,
+    SAI_OBJECT_TYPE_HASH                     = 28,
+    SAI_OBJECT_TYPE_UDF                      = 29,
+    SAI_OBJECT_TYPE_UDF_MATCH                = 30,
+    SAI_OBJECT_TYPE_UDF_GROUP                = 31,
+    SAI_OBJECT_TYPE_FDB_ENTRY                = 32,
+    SAI_OBJECT_TYPE_SWITCH                   = 33,
+    SAI_OBJECT_TYPE_HOSTIF_TRAP              = 34,
+    SAI_OBJECT_TYPE_HOSTIF_TABLE_ENTRY       = 35,
+    SAI_OBJECT_TYPE_NEIGHBOR_ENTRY           = 36,
+    SAI_OBJECT_TYPE_ROUTE_ENTRY              = 37,
+    SAI_OBJECT_TYPE_VLAN                     = 38,
+    SAI_OBJECT_TYPE_VLAN_MEMBER              = 39,
+    SAI_OBJECT_TYPE_HOSTIF_PACKET            = 40,
+    SAI_OBJECT_TYPE_TUNNEL_MAP               = 41,
+    SAI_OBJECT_TYPE_TUNNEL                   = 42,
+    SAI_OBJECT_TYPE_TUNNEL_TERM_TABLE_ENTRY  = 43,
+    SAI_OBJECT_TYPE_FDB_FLUSH                = 44,
+    SAI_OBJECT_TYPE_NEXT_HOP_GROUP_MEMBER    = 45,
+    SAI_OBJECT_TYPE_STP_PORT                 = 46,
+    SAI_OBJECT_TYPE_RPF_GROUP                = 47,
+    SAI_OBJECT_TYPE_RPF_GROUP_MEMBER         = 48,
+    SAI_OBJECT_TYPE_L2MC_GROUP               = 49,
+    SAI_OBJECT_TYPE_L2MC_GROUP_MEMBER        = 50,
+    SAI_OBJECT_TYPE_IPMC_GROUP               = 51,
+    SAI_OBJECT_TYPE_IPMC_GROUP_MEMBER        = 52,
+    SAI_OBJECT_TYPE_L2MC_ENTRY               = 53,
+    SAI_OBJECT_TYPE_IPMC_ENTRY               = 54,
+    SAI_OBJECT_TYPE_MCAST_FDB_ENTRY          = 55,
+    SAI_OBJECT_TYPE_HOSTIF_USER_DEFINED_TRAP = 56,
+    SAI_OBJECT_TYPE_MAX                      = 57
+
 } sai_object_type_t;
 
 typedef struct _sai_u8_list_t {
@@ -208,9 +223,13 @@ typedef struct _sai_u8_list_t {
     uint8_t *list;
 } sai_u8_list_t;
 
+/**
+ * @brief Defines a s8 list or string.
+ * string should be null terminated and count should include '\0'
+ */
 typedef struct _sai_s8_list_t {
     uint32_t count;
-    int8_t  *list;
+    int8_t *list;
 } sai_s8_list_t;
 
 typedef struct _sai_u16_list_t {
@@ -220,7 +239,7 @@ typedef struct _sai_u16_list_t {
 
 typedef struct _sai_s16_list_t {
     uint32_t count;
-    int16_t  *list;
+    int16_t *list;
 } sai_s16_list_t;
 
 typedef struct _sai_u32_list_t {
@@ -230,7 +249,7 @@ typedef struct _sai_u32_list_t {
 
 typedef struct _sai_s32_list_t {
     uint32_t count;
-    int32_t  *list;
+    int32_t *list;
 } sai_s32_list_t;
 
 typedef struct _sai_u32_range_t {
@@ -242,7 +261,6 @@ typedef struct _sai_s32_range_t {
     int32_t min;
     int32_t max;
 } sai_s32_range_t;
-
 
 /**
  * @brief Defines a vlan list datastructure
@@ -257,25 +275,12 @@ typedef struct _sai_vlan_list_t {
 
 } sai_vlan_list_t;
 
-typedef struct _sai_vlan_port_t sai_vlan_port_t;
-
-/**
- * @brief Defines a vlan port list datastructure
- */
-typedef struct _sai_vlan_port_list_t {
-
-    /** Number of ports in a VLAN */
-    uint32_t count;
-
-    /** List of ports in a VLAN */
-    sai_vlan_port_t *list;
-
-} sai_vlan_port_list_t;
-
-typedef enum _sai_ip_addr_family_t {
+typedef enum _sai_ip_addr_family_t
+{
     SAI_IP_ADDR_FAMILY_IPV4,
 
     SAI_IP_ADDR_FAMILY_IPV6
+
 } sai_ip_addr_family_t;
 
 typedef struct _sai_ip_address_t {
@@ -301,7 +306,7 @@ typedef struct _sai_ip_prefix_t {
 /**
  * @brief Defines a single ACL filter
  *
- * Note : IPv4 and IPv6 Address expected in Network Byte Order
+ * @note IPv4 and IPv6 Address expected in Network Byte Order
  */
 typedef struct _sai_acl_field_data_t
 {
@@ -311,7 +316,7 @@ typedef struct _sai_acl_field_data_t
     bool enable;
 
     /**
-     * Field match mask
+     * @brief Field match mask
      */
     union {
         sai_uint8_t u8;
@@ -327,7 +332,7 @@ typedef struct _sai_acl_field_data_t
     } mask;
 
     /**
-     * Expected AND result using match mask above with packet field value where applicable.
+     * @brief Expected AND result using match mask above with packet field value where applicable.
      */
     union {
         bool booldata;
@@ -349,16 +354,17 @@ typedef struct _sai_acl_field_data_t
 /**
  * @brief Defines a single ACL action
  *
- * Note : IPv4 and IPv6 Address expected in Network Byte Order
+ * @note IPv4 and IPv6 Address expected in Network Byte Order
  */
 typedef struct _sai_acl_action_data_t
 {
     /**
-     * action enable/disable
+     * @brief Action enable/disable
      */
     bool enable;
+
     /**
-     * Action parameter
+     * @brief Action parameter
      */
     union {
         sai_uint8_t u8;
@@ -373,44 +379,12 @@ typedef struct _sai_acl_action_data_t
         sai_object_id_t oid;
         sai_object_list_t objlist;
     } parameter;
+
 } sai_acl_action_data_t;
 
 /**
- * @brief Breakout Mode types based on number
- * of SerDes lanes used in a port
+ * @brief Packet Color
  */
-typedef enum _sai_port_breakout_mode_type_t
-{
-    /** 1 lane breakout Mode */
-    SAI_PORT_BREAKOUT_MODE_1_LANE = 1,
-
-    /** 2 lanes breakout Mode */
-    SAI_PORT_BREAKOUT_MODE_2_LANE = 2,
-
-    /** 4 lanes breakout Mode */
-    SAI_PORT_BREAKOUT_MODE_4_LANE = 4,
-
-    /** Breakout mode max count */
-    SAI_PORT_BREAKOUT_MODE_MAX
-} sai_port_breakout_mode_type_t;
-
-/**
- * @brief Defines breakout mode on a switch port(s)
- */
-typedef struct _sai_port_breakout_t
-{
-    /**
-     * Breakout mode type
-     */
-    sai_port_breakout_mode_type_t breakout_mode;
-
-    /**
-     * List of ports to be breakout
-     * Break out - typically 1 port; Break in - set of ports
-     */
-    sai_object_list_t  port_list;
-} sai_port_breakout_t;
-
 typedef enum _sai_packet_color_t
 {
     /**
@@ -431,8 +405,10 @@ typedef enum _sai_packet_color_t
 } sai_packet_color_t;
 
 /**
- * Defines qos map types.
- * Examples:
+ * @brief Defines qos map types.
+ *
+ * @par Examples:
+ *
  * dot1p/dscp --> TC
  * dot1p/dscp --> Color
  * dot1p/dscp --> TC + Color
@@ -440,11 +416,10 @@ typedef enum _sai_packet_color_t
  * Tc + color --> dot1p/Dscp.
  * Tc --> Egress Queue.
  */
-
 typedef struct _sai_qos_map_params_t
 {
     /** Traffic class */
-    sai_cos_t   tc;
+    sai_cos_t tc;
 
     /** DSCP value */
     sai_uint8_t dscp;
@@ -460,7 +435,7 @@ typedef struct _sai_qos_map_params_t
 
     /** Egress port queue UOID is not known at the time of map creation.
      * Using queue index for maps. */
-    sai_queue_index_t    queue_index;
+    sai_queue_index_t queue_index;
 
     /** Color of the packet */
     sai_packet_color_t color;
@@ -479,10 +454,11 @@ typedef struct _sai_qos_map_t
 
 typedef struct _sai_qos_map_list_t
 {
-    /** Number of entries in the map  */
+    /** Number of entries in the map */
     uint32_t count;
     /** Map list */
     sai_qos_map_t *list;
+
 } sai_qos_map_list_t;
 
 typedef struct _sai_tunnel_map_params_t
@@ -493,10 +469,10 @@ typedef struct _sai_tunnel_map_params_t
     /** outer ECN */
     sai_uint8_t uecn;
 
-    /** vlan id  */
+    /** vlan id */
     sai_vlan_id_t vlan_id;
 
-    /** VNI id  */
+    /** VNI id */
     sai_uint32_t vni_id;
 
 } sai_tunnel_map_params_t;
@@ -513,10 +489,12 @@ typedef struct _sai_tunnel_map_t
 
 typedef struct _sai_tunnel_map_list_t
 {
-    /** Number of entries in the map  */
+    /** Number of entries in the map */
     uint32_t count;
+
     /** Map list */
     sai_tunnel_map_t * list;
+
 } sai_tunnel_map_list_t;
 
 /**
@@ -549,7 +527,6 @@ typedef struct _sai_acl_capability_t
 
 /**
  * @brief Data Type to use enum's as attribute value is sai_int32_t s32
- *
  */
 typedef union {
     bool booldata;
@@ -562,6 +539,7 @@ typedef union {
     sai_int32_t s32;
     sai_uint64_t u64;
     sai_int64_t s64;
+    sai_pointer_t ptr;
     sai_mac_t mac;
     sai_ip4_t ip4;
     sai_ip6_t ip6;
@@ -577,12 +555,11 @@ typedef union {
     sai_u32_range_t u32range;
     sai_s32_range_t s32range;
     sai_vlan_list_t vlanlist;
-    sai_vlan_port_list_t vlanportlist;
     sai_acl_field_data_t aclfield;
     sai_acl_action_data_t aclaction;
-    sai_port_breakout_t portbreakout;
     sai_qos_map_list_t qosmap;
     sai_tunnel_map_list_t tunnelmap;
+    sai_acl_capability_t aclcapability;
 
 } sai_attribute_value_t;
 
@@ -591,7 +568,64 @@ typedef struct _sai_attribute_t {
     sai_attribute_value_t value;
 } sai_attribute_t;
 
+typedef enum _sai_bulk_op_type_t {
+
+    /* bulk operation stops on the first failed creation. Rest of objects will use SAI_STATUS_NON_EXECUTED
+     * return status value. */
+    SAI_BULK_OP_TYPE_STOP_ON_ERROR,
+
+    /* bulk operation ignores the failures and continues to create other objects */
+    SAI_BULK_OP_TYPE_INGORE_ERROR,
+} sai_bulk_op_type_t;
+
 /**
- *\}
+ * @brief Bulk objects creation.
+ *
+ * @param[in] switch_id SAI Switch object id
+ * @param[in] object_count Number of objects to create
+ * @param[in] attr_count List of attr_count. Caller passes the number
+ *         of attribute for each object to create.
+ * @param[in] attrs List of attributes for every object.
+ * @param[in] type bulk operation type.
+ *
+ * @param[out] object_id List of object ids returned
+ * @param[out] object_statuses List of status for every object. Caller needs to allocate the buffer.
+ *
+ * @return #SAI_STATUS_SUCCESS on success when all objects are created or #SAI_STATUS_FAILURE when
+ * any of the objects fails to create. When there is failure, Caller is expected to go through the
+ * list of returned statuses to find out which fails and which succeeds.
  */
-#endif // __SAITYPES_H_
+
+typedef sai_status_t (*sai_bulk_object_create_fn)(
+        _In_ sai_object_id_t switch_id,
+        _In_ uint32_t object_count,
+        _In_ uint32_t *attr_count,
+        _In_ sai_attribute_t **attrs,
+        _In_ sai_bulk_op_type_t type,
+        _Out_ sai_object_id_t *object_id,
+        _Out_ sai_status_t *object_statuses);
+
+/**
+ * @brief Bulk objects removal.
+ *
+ * @param[in] object_count Number of objects to create
+ * @param[in] object_id List of object ids
+ * @param[in] type bulk operation type.
+ * @param[out] object_statuses List of status for every object. Caller needs to allocate the buffer.
+ *
+ * @return #SAI_STATUS_SUCCESS on success when all objects are removed or #SAI_STATUS_FAILURE when
+ * any of the objects fails to remove. When there is failure, Caller is expected to go through the
+ * list of returned statuses to find out which fails and which succeeds.
+ */
+
+typedef sai_status_t (*sai_bulk_object_remove_fn)(
+        _In_ uint32_t object_count,
+        _In_ sai_object_id_t *object_id,
+        _In_ sai_bulk_op_type_t type,
+        _Out_ sai_status_t *object_statuses);
+
+
+/**
+ * @}
+ */
+#endif /** __SAITYPES_H_ */

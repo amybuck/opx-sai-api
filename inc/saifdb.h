@@ -51,6 +51,13 @@ typedef enum _sai_fdb_entry_type_t
  */
 typedef struct _sai_fdb_entry_t
 {
+    /**
+     * @brief Switch ID
+     *
+     * @objects SAI_OBJECT_TYPE_SWITCH
+     */
+    sai_object_id_t switch_id;
+
     /** Mac address */
     sai_mac_t mac_address;
 
@@ -69,6 +76,9 @@ typedef enum _sai_fdb_event_t
 
     /** FDB entry aged */
     SAI_FDB_EVENT_AGED,
+
+    /** FDB entry move */
+    SAI_FDB_EVENT_MOVE,
 
     /** FDB entry flushd */
     SAI_FDB_EVENT_FLUSHED,
@@ -95,25 +105,33 @@ typedef enum _sai_fdb_entry_attr_t
     SAI_FDB_ENTRY_ATTR_TYPE = SAI_FDB_ENTRY_ATTR_START,
 
     /**
+     * @brief FDB entry packet action
+     *
+     * @type sai_packet_action_t
+     * @flags CREATE_AND_SET
+     * @default SAI_PACKET_ACTION_FORWARD
+     */
+    SAI_FDB_ENTRY_ATTR_PACKET_ACTION,
+
+    /**
      * @brief FDB entry port id
      *
      * The port id here can refer to a generic port object such as SAI port object id,
      * SAI LAG object id and etc. or to a tunnel next hop object in case the entry is
      * l2 tunnel
      *
+     * The port id is only effective when the packet action is one of the following:
+     *  FORWARD, COPY, LOG, TRANSIT
+     *
+     * When it is SAI_NULL_OBJECT_ID, then packet will be dropped.
+     *
      * @type sai_object_id_t
      * @objects SAI_OBJECT_TYPE_PORT, SAI_OBJECT_TYPE_LAG, SAI_OBJECT_TYPE_TUNNEL
-     * @flags MANDATORY_ON_CREATE | CREATE_ONLY
+     * @default SAI_NULL_OBJECT_ID
+     * @flags CREATE_AND_SET
+     * @allownull true
      */
     SAI_FDB_ENTRY_ATTR_PORT_ID,
-
-    /**
-     * @brief FDB entry packet action
-     *
-     * @type sai_packet_action_t
-     * @flags MANDATORY_ON_CREATE | CREATE_ONLY
-     */
-    SAI_FDB_ENTRY_ATTR_PACKET_ACTION,
 
     /**
      * @brief User based Meta Data
@@ -181,6 +199,8 @@ typedef enum _sai_fdb_flush_attr_t
      * @type sai_object_id_t
      * @objects SAI_OBJECT_TYPE_PORT
      * @flags CREATE_ONLY
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
      */
     SAI_FDB_FLUSH_ATTR_PORT_ID = SAI_FDB_FLUSH_ATTR_START,
 
@@ -282,12 +302,14 @@ typedef sai_status_t (*sai_get_fdb_entry_attribute_fn)(
 /**
  * @brief Remove all FDB entries by attribute set in sai_fdb_flush_attr
  *
+ * @param[in] switch_id Switch object id
  * @param[in] attr_count Number of attributes
  * @param[in] attr_list Array of attributes
  *
  * @return #SAI_STATUS_SUCCESS on success Failure status code on error
  */
 typedef sai_status_t (*sai_flush_fdb_entries_fn)(
+        _In_ sai_object_id_t switch_id,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list);
 

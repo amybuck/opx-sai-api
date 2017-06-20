@@ -37,6 +37,7 @@
 #include "saineighbor.h"
 #include "sainexthopgroup.h"
 #include "sainexthop.h"
+#include "saiobject.h"
 #include "saipolicer.h"
 #include "saiport.h"
 #include "saiqosmaps.h"
@@ -53,6 +54,12 @@
 #include "saiudf.h"
 #include "saivlan.h"
 #include "saiwred.h"
+#include "sail2mc.h"
+#include "saiipmc.h"
+#include "sairpfgroup.h"
+#include "sail2mcgroup.h"
+#include "saiipmcgroup.h"
+#include "saimcfdb.h"
 
 /**
  * @defgroup SAI SAI - Entry point specific API definitions.
@@ -69,7 +76,8 @@
  */
 typedef enum _sai_api_t
 {
-    SAI_API_UNSPECIFIED      =  0, /**< unspecified api */
+    SAI_API_START            =  0, /**< start */
+    SAI_API_UNSPECIFIED      =  SAI_API_START, /**< unspecified api */
     SAI_API_SWITCH           =  1, /**< sai_switch_api_t */
     SAI_API_PORT             =  2, /**< sai_port_api_t */
     SAI_API_FDB              =  3, /**< sai_fdb_api_t */
@@ -96,6 +104,18 @@ typedef enum _sai_api_t
     SAI_API_HASH             = 24, /**< sai_hash_api_t */
     SAI_API_UDF              = 25, /**< sai_udf_api_t */
     SAI_API_TUNNEL           = 26, /**< sai_tunnel_api_t */
+    SAI_API_L2MC             = 27, /**< sai_l2mc_api_t */
+    SAI_API_IPMC             = 28, /**< sai_ipmc_api_t */
+    SAI_API_RPF_GROUP        = 29, /**< sai_rpf_group_api_t */
+    SAI_API_L2MC_GROUP       = 30, /**< sai_l2mc_group_api_t */
+    SAI_API_IPMC_GROUP       = 31, /**< sai_ipmc_group_api_t */
+    SAI_API_MCAST_FDB        = 32, /**< sai_mcast_fdb_api_t */
+    SAI_API_END,
+    SAI_API_CUSTOM_RANGE_START = 0x1000,
+    /** Extension module provided by Dell Inc. SAI implementation */
+    SAI_API_FC_SWITCH = SAI_API_CUSTOM_RANGE_START,
+    SAI_API_FC_PORT,
+    SAI_API_CUSTOM_RANGE_END,
 } sai_api_t;
 
 /**
@@ -104,22 +124,22 @@ typedef enum _sai_api_t
 typedef enum _sai_log_level_t
 {
     /** Log Level Debug */
-    SAI_LOG_LEVEL_DEBUG            = 1,
+    SAI_LOG_LEVEL_DEBUG            = 0,
 
     /** Log Level Info */
-    SAI_LOG_LEVEL_INFO             = 2,
+    SAI_LOG_LEVEL_INFO             = 1,
 
     /** Log Level Notice */
-    SAI_LOG_LEVEL_NOTICE           = 3,
+    SAI_LOG_LEVEL_NOTICE           = 2,
 
     /** Log level Warnng */
-    SAI_LOG_LEVEL_WARN             = 4,
+    SAI_LOG_LEVEL_WARN             = 3,
 
     /** Log Level Error */
-    SAI_LOG_LEVEL_ERROR            = 5,
+    SAI_LOG_LEVEL_ERROR            = 4,
 
     /** Log Level Critical */
-    SAI_LOG_LEVEL_CRITICAL         = 6
+    SAI_LOG_LEVEL_CRITICAL         = 5
 
 } sai_log_level_t;
 
@@ -205,6 +225,16 @@ sai_status_t sai_log_set(
  */
 sai_object_type_t sai_object_type_query(
         _In_ sai_object_id_t sai_object_id);
+
+/**
+* @brief Generate dump file. The dump file may include SAI state information and vendor SDK information.
+*
+* @param[in] dump_file_name Full path for dump file
+*
+* @return #SAI_STATUS_SUCCESS on success Failure status code on error
+*/
+sai_status_t sai_dbg_generate_dump(
+    _In_ const char *dump_file_name);
 
 /**
  * @}

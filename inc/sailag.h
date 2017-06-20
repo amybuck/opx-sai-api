@@ -52,6 +52,40 @@ typedef enum _sai_lag_attr_t
      */
     SAI_LAG_ATTR_PORT_LIST = SAI_LAG_ATTR_START,
 
+    /** READ_WRITE */
+
+    /**
+     * @brief LAG bind point for ingress ACL object
+     *
+     * Bind (or unbind) an ingress acl table or acl group on a LAG. Enable/Update
+     * ingress ACL table or ACL group filtering by assigning the list of valid
+     * object id. Disable ingress filtering by assigning SAI_NULL_OBJECT_ID
+     * in the attribute value.
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_ACL_TABLE, SAI_OBJECT_TYPE_ACL_TABLE_GROUP
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
+    SAI_LAG_ATTR_INGRESS_ACL,
+
+    /**
+     * @brief LAG bind point for egress ACL object
+     *
+     * Bind (or unbind) an egress acl tables or acl groups on a LAG. Enable/Update
+     * egress ACL table or ACL group filtering by assigning the list of valid
+     * object id. Disable egress filtering by assigning SAI_NULL_OBJECT_ID
+     * in the attribute value.
+     *
+     * @type sai_object_id_t
+     * @objects SAI_OBJECT_TYPE_ACL_TABLE, SAI_OBJECT_TYPE_ACL_TABLE_GROUP
+     * @flags CREATE_AND_SET
+     * @allownull true
+     * @default SAI_NULL_OBJECT_ID
+     */
+    SAI_LAG_ATTR_EGRESS_ACL,
+
     /**
      * @brief End of attributes
      */
@@ -69,6 +103,7 @@ typedef enum _sai_lag_attr_t
  * @brief Create LAG
  *
  * @param[out] lag_id LAG id
+ *
  * @param[in] attr_count Number of attributes
  * @param[in] attr_list Array of attributes
  *
@@ -76,6 +111,7 @@ typedef enum _sai_lag_attr_t
  */
 typedef sai_status_t(*sai_create_lag_fn)(
         _Out_ sai_object_id_t *lag_id,
+        _In_ sai_object_id_t switch_id,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list);
 
@@ -178,6 +214,7 @@ typedef enum _sai_lag_member_attr_t
  * @brief Create LAG Member
  *
  * @param[out] lag_member_id LAG Member id
+ * @param[in] switch_id Switch id
  * @param[in] attr_count Number of attributes
  * @param[in] attr_list Array of attributes
  *
@@ -185,6 +222,7 @@ typedef enum _sai_lag_member_attr_t
  */
 typedef sai_status_t(*sai_create_lag_member_fn)(
         _Out_ sai_object_id_t *lag_member_id,
+        _In_ sai_object_id_t switch_id,
         _In_ uint32_t attr_count,
         _In_ const sai_attribute_t *attr_list);
 
@@ -237,6 +275,8 @@ typedef struct _sai_lag_api_t
     sai_remove_lag_member_fn         remove_lag_member;
     sai_set_lag_member_attribute_fn  set_lag_member_attribute;
     sai_get_lag_member_attribute_fn  get_lag_member_attribute;
+    sai_bulk_object_create_fn        create_lag_members;
+    sai_bulk_object_remove_fn        remove_lag_members;
 } sai_lag_api_t;
 
 /**
